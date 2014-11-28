@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 #define MAXOP 100
 #define NUMBER '0'
@@ -31,11 +32,9 @@ int getop(char s[])
     
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
-    
     s[1] = '\0';
     if (!isdigit(c) && c != '.')
         return c;
-    
     i = 0;
     if (isdigit(c))
         while (isdigit(s[++i] = c = getch()))
@@ -43,7 +42,6 @@ int getop(char s[])
     if (c == ',')
         while (isdigit(s[++i] = c = getch()))
             ;
-    
     s[i] = '\0';
     if (c != EOF)
         ungetch(c);
@@ -51,9 +49,8 @@ int getop(char s[])
     
 }
 
-
-char val[MAXVAL];
 int stack_position = 0;
+char val[MAXVAL];
 
 void push(double f)
 {
@@ -80,28 +77,11 @@ int main(int argc, char **argv)
     int type;
     double op2;
     char s[MAXOP];
-    char c;
-    char* in;
-    FILE* fp;
-    int i = 0;
-    
-    if (argv[1] != NULL) {
-        fp = fopen("calc_input.txt", "r");
-    } else
-        exit(EXIT_FAILURE);
-    
-    
-    while((c = getc(fp)) != EOF) {
-        fgets(in, MAXOP - 1, fp);
-        s[i] = *in;
-        ++i;
-        printf("%c\n", s[i]);
-    }
-    
-    while ((type = getop(s) != EOF)) {
-        
-        switch(type) {
-                
+  
+    while ((type = getop(s)) != EOF) {
+         printf("%s ", s);
+         
+        switch(type) {       
             case NUMBER:
                 push(atof(s));
                 break;
@@ -122,16 +102,17 @@ int main(int argc, char **argv)
                 else
                     printf("error: zero divisor\n");
                 break;
+            case '%':
+            	  op2 = pop();
+            	  push((int)pop() % (int)op2);
+            	  break;
             case '\n':
-                printf("\t%.8g\n", pop());
-                break;
-            case '!':
+                printf("equals: %.8g\n", pop());
                 break;
             default:
                 printf("error: unknown command [%s]\n", s);
                 break;
         }
     }
-    
     return 0;
 }
