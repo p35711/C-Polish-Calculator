@@ -46,7 +46,7 @@ int getop(char s[])
     if (c != EOF)
         ungetch(c);
     return NUMBER;
-    
+
 }
 
 int stack_position = 0;
@@ -54,8 +54,9 @@ char val[MAXVAL];
 
 void push(double f)
 {
-    if(stack_position < MAXVAL)
+    if(stack_position < MAXVAL) {
         val[stack_position++] = f;
+    }
     else
         printf("error: stack is full, cannot push %g\n", f);
 }
@@ -68,6 +69,21 @@ double pop(void)
         printf("error: stack empty\n");
         return 0.0;
     }
+}
+
+void printstack(void) /* Exercise 4-4 */
+{
+    if(stack_position > 0)
+    {
+        int i = stack_position;
+        printf("\nstack: ");
+        for(; i >= 0;--i)
+           printf("[%i]:%d ", i, val[i]);  
+    }
+    
+    printf("\n");
+    
+
 }
 
 /* Reverse Polish Calculator */
@@ -102,10 +118,13 @@ int main(int argc, char **argv)
                 else
                     printf("error: zero divisor\n");
                 break;
-            case '%':
+            case '%':   /* Exercise 4-3 */
             	  op2 = pop();
             	  push((int)pop() % (int)op2);
             	  break;
+            case 'p':   /* Exercise 4-4 */
+                 printstack();
+                 break;
             case '\n':
                 printf("equals: %.8g\n", pop());
                 break;
